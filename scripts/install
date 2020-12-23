@@ -97,7 +97,7 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 #ynh_setup_source --dest_dir="$final_path"
 
 #git clone --branch master git://github.com/ether/etherpad-lite.git "$final_path" --quiet
-git clone --branch master https://github.com/ether/etherpad-lite.git "$final_path" --quiet && cd "$final_path" && bin/run.sh
+git clone --branch master https://github.com/ether/etherpad-lite.git "$final_path" --quiet
 
 #=================================================
 # NGINX CONFIGURATION
@@ -122,11 +122,12 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 
 # chown -R $app: $final_path
 
-# pushd "$final_path" || ynh_die
-#  	ynh_use_nodejs
+pushd "$final_path" || ynh_die
+  	ynh_use_nodejs
+	ynh_exec_as $app bin/run.sh
 #  	ynh_exec_as $app env "$ynh_node_load_PATH" bin/installDeps.sh
 
-# popd || ynh_die
+ popd || ynh_die
 
 #=================================================
 # MODIFY A CONFIG FILE
