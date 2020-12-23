@@ -84,7 +84,7 @@ then
 	# Download, check integrity, uncompress and patch the source from app.src
 	pushd "$final_path"
 		git pull origin
-		ynh_exec_as $app bin/run.sh
+		ynh_exec_as $app  env "$ynh_node_load_PATH" bin/run.sh
 	popd
 fi
 

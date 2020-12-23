@@ -124,7 +124,7 @@ ynh_system_user_create --username=$app --home_dir=$final_path
 
 pushd "$final_path" || ynh_die
   	ynh_use_nodejs
-	ynh_exec_as $app bin/run.sh
+	ynh_exec_as $app env "$ynh_node_load_PATH" bin/run.sh
 #  	ynh_exec_as $app env "$ynh_node_load_PATH" bin/installDeps.sh
 
  popd || ynh_die
