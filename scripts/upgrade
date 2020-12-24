@@ -84,7 +84,6 @@ then
 	# Download, check integrity, uncompress and patch the source from app.src
 	pushd "$final_path"
 		git pull origin
-		ynh_exec_as $app  env "$ynh_node_load_PATH" bin/run.sh
 	popd
 fi
 
@@ -118,12 +117,11 @@ ynh_system_user_create --username=$app
 # #=================================================
 # ynh_script_progression --message="Installing Etherpad..." --weight=90
 
-# chown -R $app: $final_path
+chown -R $app: $final_path
 
-# pushd "$final_path" || ynh_die
-#  	ynh_use_nodejs
-#  	ynh_exec_as $app env $ynh_node_load_PATH bin/installDeps.sh
-# popd || ynh_die 
+	pushd "$final_path"
+		ynh_exec_as $app env "$ynh_node_load_PATH" bin/installDeps.sh
+	popd
 
 #=================================================
 # MODIFY A CONFIG FILE
