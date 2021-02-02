@@ -50,6 +50,18 @@ if [ -z "$final_path" ]; then
 	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 fi
 
+# Cleaning legacy permissions
+if ynh_legacy_permissions_exists; then
+	ynh_legacy_permissions_delete_all
+
+	ynh_app_setting_delete --app=$app --key=is_public
+fi
+
+if ! ynh_permission_exists --permission="admin"; then
+	# Create the required permissions
+	ynh_permission_create --permission="admin" --url="/admin" --allowed=$admin
+fi
+
 #=================================================
 # BACKUP BEFORE UPGRADE THEN ACTIVE TRAP
 #=================================================
@@ -117,11 +129,11 @@ ynh_system_user_create --username=$app
 # #=================================================
 # ynh_script_progression --message="Installing Etherpad..." --weight=90
 
-chown -R $app: $final_path
+# chown -R $app: $final_path
 
-	pushd "$final_path"
-		ynh_exec_as $app env "$ynh_node_load_PATH" bin/installDeps.sh
-	popd
+# 	pushd "$final_path"
+# 		ynh_exec_as $app env "$ynh_node_load_PATH" bin/installDeps.sh
+# 	popd
 
 #=================================================
 # MODIFY A CONFIG FILE
