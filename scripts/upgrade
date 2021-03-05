@@ -85,22 +85,6 @@ ynh_script_progression --message="Stopping a systemd service..." --weight=42
 ynh_systemd_action --service_name=$app --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
-# DOWNLOAD, CHECK AND UNPACK SOURCE
-#=================================================
-
-if [ "$upgrade_type" == "UPGRADE_APP" ]
-then
-	ynh_script_progression --message="Upgrading source files..." --weight=1
-
-	# Download, check integrity, uncompress and patch the source from app.src
-	pushd "$final_path"
-		git pull origin
-		ynh_use_nodejs
-		ynh_exec_as $app env "$ynh_node_load_PATH" src/bin/run.sh
-	popd
-fi
-
-#=================================================
 # NGINX CONFIGURATION
 #=================================================
 ynh_script_progression --message="Upgrading NGINX web server configuration..." --weight=3
@@ -126,15 +110,31 @@ ynh_script_progression --message="Making sure dedicated system user exists..." -
 ynh_system_user_create --username=$app
 
 #=================================================
-# MODIFY A CONFIG FILE
+# DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
-ynh_script_progression --message="Reconfiguring Etherpad..." --weight=6
 
-ynh_add_config --template="../conf/settings.json" --destination="$final_path/settings.json"
-ynh_store_file_checksum --file="$final_path/settings.json"
+if [ "$upgrade_type" == "UPGRADE_APP" ]
+then
+	ynh_script_progression --message="Upgrading source files..." --weight=1
 
-ynh_add_config --template="../conf/credentials.json" --destination="$final_path/credentials.json"
-ynh_store_file_checksum --file="$final_path/credentials.json"
+	# Download, check integrity, uncompress and patch the source from app.src
+	pushd "$final_path"
+		git pull origin
+		ynh_use_nodejs
+		ynh_exec_as $app env "$ynh_node_load_PATH" src/bin/run.sh
+	popd
+fi
+
+# #=================================================
+# # MODIFY A CONFIG FILE
+# #=================================================
+# ynh_script_progression --message="Reconfiguring Etherpad..." --weight=6
+
+# ynh_add_config --template="../conf/settings.json" --destination="$final_path/settings.json"
+# ynh_store_file_checksum --file="$final_path/settings.json"
+
+# ynh_add_config --template="../conf/credentials.json" --destination="$final_path/credentials.json"
+# ynh_store_file_checksum --file="$final_path/credentials.json"
 
 #=================================================
 # GENERIC FINALIZATION
