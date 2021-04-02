@@ -103,7 +103,6 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 #ynh_setup_source --dest_dir="$final_path"
 
-#git clone --branch master git://github.com/ether/etherpad-lite.git "$final_path" --quiet
 git clone --branch master https://github.com/ether/etherpad-lite.git "$final_path" --quiet
 
 #=================================================
@@ -124,7 +123,7 @@ chown -R $app: $final_path
 pushd "$final_path" || ynh_die
   	ynh_use_nodejs
 	ynh_exec_as $app env "$ynh_node_load_PATH" src/bin/installDeps.sh
-	ynh_exec_warn_less ynh_exec_as $app env "$ynh_node_load_PATH" npm install ep_automatic_logut ep_countable ep_spellcheck ep_delete_empty_pads ep_subscript_and_superscript ep_headings2 ep_author_hover ep_markdown ep_comments_page ep_align ep_font_color ep_embedded_hyperlinks2
+	ynh_exec_warn_less ynh_exec_as $app env "$ynh_node_load_PATH" npm install ep_automatic_logut ep_countable ep_spellcheck ep_delete_empty_pads ep_subscript_and_superscript ep_headings2 ep_author_hover ep_markdown ep_comments_page ep_align ep_font_color
  popd || ynh_die
 
 #=================================================
@@ -134,14 +133,6 @@ ynh_script_progression --message="Configuring Etherpad..." --weight=6
 
 ynh_add_config --template="../conf/settings.json" --destination="$final_path/settings.json"
 ynh_add_config --template="../conf/credentials.json" --destination="$final_path/credentials.json"
-
-#=================================================
-# STORE THE CONFIG FILE CHECKSUM
-#=================================================
-
-# Calculate and store the config file checksum into the app settings
-ynh_store_file_checksum --file="$final_path/settings.json"
-ynh_store_file_checksum --file="$final_path/credentials.json"
 
 #=================================================
 # GENERIC FINALIZATION
