@@ -125,6 +125,12 @@ ynh_script_progression --message="Installing dependencies..." --weight=12
 
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
+if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+	ynh_script_progression --message="Remove previous NodeJS"
+	ynh_remove_nodejs
+fi
+
+
 ynh_install_nodejs --nodejs_version=$nodejs_version
 
 #=================================================
@@ -135,8 +141,8 @@ ynh_script_progression --message="Installing Etherpad..." --weight=90
 chown -R $app: $final_path
 
 pushd $final_path || ynh_die
- 	ynh_use_nodejs
- 	ynh_exec_as $app env "$ynh_node_load_PATH" src/bin/installDeps.sh
+	ynh_use_nodejs
+	ynh_exec_as $app env "$ynh_node_load_PATH" src/bin/installDeps.sh
 	ynh_exec_warn_less ynh_exec_as $app env "$ynh_node_load_PATH" npm cache clean --force
 	ynh_exec_warn_less ynh_exec_as $app env "$ynh_node_load_PATH" npm install --upgrade 
 popd || ynh_die 
