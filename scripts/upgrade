@@ -26,6 +26,8 @@ password=$(ynh_app_setting_get --app=$app --key=password)
 db_name=$(ynh_app_setting_get --app=$app --key=db_name)
 db_pwd=$(ynh_app_setting_get --app=$app --key=psqlpwd)
 
+current_version="$(ynh_app_upstream_version --manifest="/etc/yunohost/apps/$app/manifest.json")"
+
 #=================================================
 # CHECK VERSION
 #=================================================
@@ -125,11 +127,11 @@ ynh_script_progression --message="Installing dependencies..." --weight=12
 
 ynh_exec_warn_less ynh_install_app_dependencies $pkg_dependencies
 
-if ynh_version_gt "1.0.3~ynh1" "${previous_version}" ; then
+previous_version="${current_version}"
+if ynh_version_gt "1.8.4" "${previous_version}" ; then
 	ynh_script_progression --message="Remove previous NodeJS"
 	ynh_remove_nodejs
 fi
-
 
 ynh_install_nodejs --nodejs_version=$nodejs_version
 
